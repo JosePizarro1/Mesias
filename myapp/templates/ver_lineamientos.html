@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lineamientos - MESIAS</title>
+
+    <!-- Cargar Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Cargar Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Cargar Font Awesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+    .custom-icon {
+    font-size: 4rem; /* O el tamaño que desees */
+}
+body {
+            font-family: 'Playfair Display', serif;
+        }
+        .search-bar {
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .custom-icon {
+            font-size: 1.2rem;
+        }
+        .lineamiento-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 700px;
+            margin: 10px 0;
+        }
+        .lineamiento-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            margin-right: 15px;
+        }
+        .lineamiento-card-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 150px;
+        }
+        .nav-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-custom {
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+        }
+
+        .btn-custom:hover {
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <!-- Header -->
+    <header class="bg-white text-black p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <img src="{% static 'images/logomesias.png' %}" alt="Logo MESIAS" class="h-10">
+            <nav class="flex flex-1 justify-between items-center">
+                <a href="{% url 'home' %}" class="nav-item hover:text-gray-600">Home</a>
+                <a href="#" class="nav-item hover:text-gray-600">Proyectos</a>
+                <a href="#" class="nav-item hover:text-gray-600">Test</a>
+            </nav>
+            <a href="{% url 'login' %}" class="btn btn-custom px-4 py-2">Login</a>
+        </div>
+    </header>
+
+    <!-- Lineamientos Section -->
+    <section class="py-10">
+        <h2 class="text-center text-3xl font-bold mb-6 text-gray-800">Lineamientos que debes conocer</h2>
+        
+        <!-- Buscador -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar lineamientos..." aria-label="Buscar lineamientos" onkeyup="filtrarLineamientos()">
+        </div>
+
+        <div class="container mx-auto">
+            <div class="flex flex-col items-center" id="lineamientosList">
+                {% for lineamiento in lineamientos %}
+                <div class="lineamiento-card mb-4" data-titulo="{{ lineamiento.titulo_principal|lower }}">
+                    <a href="{% url 'lineamiento_detalle' lineamiento.id %}" class="w-full max-w-lg no-underline">
+                        <div class="bg-white rounded-lg shadow-lg flex p-4 transition-transform transform hover:scale-105 hover:shadow-xl">
+                            <img src="{{ lineamiento.imagen.url }}" alt="{{ lineamiento.titulo_principal }}" class="rounded-lg">
+                            <div class="lineamiento-card-content">
+                                <h3 class="text-sm font-medium text-gray-600">{{ lineamiento.titulo_secundario }}</h3>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ lineamiento.titulo_principal }}</h2>
+                                <div class="border-b-2 border-gray-800 mb-2"></div>
+                                <p class="text-gray-600 text-xs">{{ lineamiento.descripcion|truncatewords:40 }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 MESIAS. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Función para filtrar lineamientos
+        function filtrarLineamientos() {
+            let input = document.getElementById('searchInput');
+            let filter = input.value.toLowerCase();
+            let lineamientos = document.getElementById('lineamientosList').getElementsByClassName('lineamiento-card');
+            
+            for (let i = 0; i < lineamientos.length; i++) {
+                let titulo = lineamientos[i].getAttribute('data-titulo');
+                if (titulo.includes(filter)) {
+                    lineamientos[i].style.display = '';
+                } else {
+                    lineamientos[i].style.display = 'none';
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>
