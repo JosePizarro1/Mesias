@@ -1,0 +1,385 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mis Evaluaciones – MESIAS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"/>
+  <link
+    href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    rel="stylesheet"/>
+  <link rel="shortcut icon" href="{% static 'images/icon.jpeg' %}" type="image/jpeg"/>
+  <style>
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0px); }
+    }
+    .hover-float:hover {
+      animation: float 1.5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100 relative min-h-screen">
+
+  <div class="flex">
+    {% include 'lateral.html' %}
+
+    <main class="flex-1 ml-0 md:ml-64 p-8">
+      <div class="max-w-6xl mx-auto space-y-8">
+        <h1 class="text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          Mis Evaluaciones
+        </h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {% for ev in evaluaciones %}
+            <div class="relative group bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 p-6 hover:-translate-y-2">
+              <div class="flex items-start gap-5">
+                <!-- Botón del robot modificado -->
+                {% if ev.fase == 'FASE2' %}
+                <button class="hover-float transform transition-all duration-300 hover:scale-110"
+                  onclick="confirmAndAnalyze({{ ev.id }})">
+                {% else %}
+                <div class="cursor-not-allowed opacity-75">
+                {% endif %}
+                  <div class="relative w-14 h-14 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-gradient-to-br
+                              {% if ev.fase == 'FASE2' %}
+                                from-red-600 to-red-500
+                              {% else %}
+                                from-green-600 to-green-500
+                              {% endif %}
+                              rounded-full blur opacity-75 group-hover:opacity-100 transition"></div>
+                    <div class="w-14 h-14 bg-gray-800 rounded-full flex items-center justify-center
+                             {% if ev.fase == 'FASE2' %}
+                               ring-2 ring-red-500/50
+                             {% else %}
+                               ring-2 ring-green-500/50
+                             {% endif %}
+                             group-hover:ring-4 transition-all">
+                      <i class="bi bi-robot text-2xl
+                              {% if ev.fase == 'FASE2' %}
+                                text-red-400
+                              {% else %}
+                                text-green-400
+                              {% endif %}
+                              group-hover:text-white transition"></i>
+                    </div>
+                  </div>
+                {% if ev.fase == 'FASE2' %}</button>{% else %}</div>{% endif %}
+
+                <!-- Contenido -->
+                <div class="flex-1 space-y-2">
+                  <h2 class="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-300 bg-clip-text text-transparent">
+                    {{ ev.nombre_proyecto }}
+                  </h2>
+                  <div class="space-y-1">
+                    <p class="flex items-center gap-2 text-sm text-gray-400">
+                      <i class="bi bi-diagram-3-fill text-purple-400"></i>
+                      <span class="font-medium text-gray-300">{{ ev.get_fase_display }}</span>
+                    </p>
+                    <p class="flex items-center gap-2 text-sm text-gray-400">
+                      <i class="bi bi-calendar-event text-blue-400"></i>
+                      <span class="font-medium text-gray-300">{{ ev.fecha_inicio|date:"Y-m-d" }}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Estado -->
+                <div class="absolute top-4 right-4 flex flex-col items-end gap-2">
+                  <button
+                      data-promedios='{
+    "Agencia humana y supervisión": {{ ev.promedio_agencia|default:"0.00" }},
+    "Bienestar Social y Ambiental": {{ ev.promedio_bienestar|default:"0.00" }},
+    "Diversidad, no discriminación y equidad": {{ ev.promedio_diversidad|default:"0.00" }},
+    "Responsabilidad": {{ ev.promedio_responsabilidad|default:"0.00" }},
+    "Robustez técnica y seguridad": {{ ev.promedio_robustez|default:"0.00" }},
+    "Transparencia": {{ ev.promedio_transparencia|default:"0.00" }}
+  }'
+                    onclick="openPromediosModal(this)"
+                    class="transform transition-all hover:scale-105">
+                    <span class="px-3 py-1 rounded-full text-sm font-medium shadow-lg
+                              {% if ev.fase == 'FASE2' %}
+                                bg-gradient-to-r from-red-600 to-red-500 text-red-50
+                              {% else %}
+                                bg-gradient-to-r from-green-600 to-green-500 text-green-50
+                              {% endif %}
+                              hover:shadow-xl transition-all">
+                      {% if ev.fase == 'FASE2' %}Pendiente{% else %}Completada{% endif %}
+                    </span>
+                  </button>
+
+                  {% if ev.fase != 'FASE2' %}
+                  <button onclick="showChatReport('{{ ev.informe_gpt|escapejs }}')"
+                    class="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-all">
+                    <i class="bi bi-chat-left-text text-green-400"></i>
+                  </button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal de promedios -->
+  <div id="promediosModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden z-50">
+    <div class="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl p-8 w-11/12 max-w-lg shadow-2xl border border-gray-700">
+      <h3 class="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-blue-300 bg-clip-text text-transparent">
+        Promedios por sección
+      </h3>
+      <ul id="promediosList" class="space-y-4">
+        <!-- Los items se generarán dinámicamente aquí -->
+      </ul>
+      <div class="mt-8 flex justify-end">
+        <button onclick="closePromediosModal()"
+          class="px-6 py-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white transition-all transform hover:scale-105">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+ <!-- Modal de informe GPT -->
+  <div id="chatReportModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden z-50">
+    <div class="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl p-6 w-11/12 max-w-2xl shadow-2xl border border-gray-700">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold bg-gradient-to-r from-green-400 to-blue-300 bg-clip-text text-transparent">
+          Análisis Completo
+        </h3>
+        <button onclick="closeChatReport()" class="text-gray-400 hover:text-white">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div id="chatReportContent" class="bg-gray-700 rounded-lg p-4 max-h-[60vh] overflow-y-auto">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+            <i class="bi bi-robot text-white"></i>
+          </div>
+          <div class="bg-gray-800 text-white p-4 rounded-lg flex-1">
+            <div id="typingIndicator" class="flex space-x-1">
+              <div class="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+              <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+              <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+            </div>
+            <div id="reportContent" class="prose prose-invert max-w-none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    function openPromediosModal(btn) {
+      const data = JSON.parse(btn.getAttribute('data-promedios').replace(/(\r\n|\n|\r|\s+)/gm,""));
+      const ul = document.getElementById('promediosList');
+      ul.innerHTML = '';
+
+      for (const [sec, val] of Object.entries(data)) {
+        const li = document.createElement('li');
+        li.className = 'flex justify-between items-center p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition';
+        li.innerHTML = `
+          <span class="text-gray-300">${sec}</span>
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-lg ${val >= 3 ? 'text-green-400' : 'text-red-400'}">
+              ${val?.toFixed(2) || '0.00'}
+            </span>
+            <div class="w-12 h-1 rounded-full bg-gray-600">
+              <div class="h-full ${val >= 3 ? 'bg-green-500' : 'bg-red-500'} rounded-full"
+                   style="width: ${(val/5)*100}%"></div>
+            </div>
+          </div>
+        `;
+        ul.appendChild(li);
+      }
+      document.getElementById('promediosModal').classList.remove('hidden');
+    }
+
+    function closePromediosModal() {
+      document.getElementById('promediosModal').classList.add('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      {% if messages %}
+        {% for message in messages %}
+          Swal.fire({
+            icon: 'info',
+            title: "{{ message|escapejs }}",
+            timer: 7000,
+            showConfirmButton: false,
+            background: '#1f2937',
+            color: '#fff'
+          });
+        {% endfor %}
+      {% endif %}
+    });
+  </script>
+  <script>
+  // Confirmar y disparar el análisis en el backend
+  function confirmAndAnalyze(evalId) {
+    Swal.fire({
+      title: '¿Empezar análisis inteligente?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, iniciar',
+      cancelButtonText: 'Cancelar',
+      background: '#1f2937',
+      color: '#fff'
+    }).then(result => {
+      if (!result.isConfirmed) return;
+
+      Swal.fire({
+        title: 'Analizando…',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      fetch(`/evaluaciones/analizar/${evalId}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)[1]
+        }
+      })
+      .then(r => r.json())
+      .then(json => {
+        Swal.fire({
+          icon: 'success',
+          title: json.message,
+          background: '#1f2937',
+          color: '#fff'
+        }).then(() => {
+          window.location.reload();
+        });
+      })
+      .catch(() => {
+        Swal.fire('Error','No se pudo completar el análisis','error');
+      });
+    });
+  }
+
+  // Asignar al botón en cada tarjeta:
+  // <button onclick="confirmAndAnalyze({{ ev.id }})">…</button>
+</script>
+<script>
+    // Función para mostrar el chat de informe
+    // Función para mostrar el chat de informe
+    let typingInterval;
+    function showChatReport(content) {
+      const modal = document.getElementById('chatReportModal');
+      const reportContent = document.getElementById('reportContent');
+      const typingIndicator = document.getElementById('typingIndicator');
+
+      modal.classList.remove('hidden');
+      reportContent.innerHTML = '';
+      typingIndicator.classList.remove('hidden');
+
+      // Dividir en secciones
+      const sections = content.split('\n\n').filter(s => s.trim() !== '');
+      let currentSection = 0;
+      let isTyping = true;
+
+      function typeNext() {
+        if (currentSection < sections.length) {
+          const section = sections[currentSection];
+          const [header, ...body] = section.split('\n');
+
+          // Crear contenedor de sección
+          const sectionDiv = document.createElement('div');
+          sectionDiv.className = 'mb-4 p-3 bg-gray-800 rounded-lg border-l-4 border-green-500';
+
+          // Formatear encabezado
+            const headerElement = document.createElement('div');
+            headerElement.className = 'flex items-center gap-3 mb-2';
+            headerElement.innerHTML = `
+                <span class="text-3xl font-bold text-green-400">${header[0]}</span>
+                <div>
+                    <strong class="text-lg font-semibold text-green-300">${header.substring(3)}</strong>
+                </div>
+            `;
+
+          // Formatear cuerpo
+          const bodyElement = document.createElement('div');
+          bodyElement.className = 'text-gray-200 space-y-2 pl-8';
+
+          sectionDiv.appendChild(headerElement);
+          sectionDiv.appendChild(bodyElement);
+          reportContent.appendChild(sectionDiv);
+
+          let lineIndex = 0;
+
+          function typeLine() {
+            if (lineIndex < body.length) {
+              const line = body[lineIndex];
+              const p = document.createElement('p');
+              bodyElement.appendChild(p);
+
+              let charIndex = 0;
+              const lineInterval = setInterval(() => {
+                if (charIndex < line.length) {
+                  p.textContent += line.charAt(charIndex);
+                  charIndex++;
+                  reportContent.scrollTop = reportContent.scrollHeight;
+                } else {
+                  clearInterval(lineInterval);
+                  lineIndex++;
+                  typeLine();
+                }
+              }, 20);
+            } else {
+              currentSection++;
+              typeNext();
+            }
+          }
+
+          typeLine();
+        } else {
+          isTyping = false;
+          typingIndicator.classList.add('hidden');
+        }
+      }
+
+      typeNext();
+
+      // Manejador para mostrar todo el texto
+      const showFullText = () => {
+        if (!isTyping) return;
+
+        clearInterval(typingInterval);
+        reportContent.innerHTML = sections.map(section => {
+          const [header, ...body] = section.split('\n');
+            return `
+                <div class="mb-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-3xl font-bold text-green-400">${header[0]}</span>
+                        <strong class="text-lg font-semibold text-green-300">${header.substring(3)}</strong>
+                    </div>
+                    <div class="text-gray-300 space-y-2 ml-4 border-l-2 border-green-500 pl-4">
+                        ${body.map(line => `<p class="leading-relaxed">${line}</p>`).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        typingIndicator.classList.add('hidden');
+        reportContent.scrollTop = reportContent.scrollHeight;
+        isTyping = false;
+        modal.removeEventListener('click', showFullText);
+      };
+
+      modal.addEventListener('click', showFullText);
+    }
+
+    function closeChatReport() {
+      clearInterval(typingInterval);
+      document.getElementById('chatReportModal').classList.add('hidden');
+      document.getElementById('reportContent').innerHTML = '';
+      document.getElementById('typingIndicator').classList.remove('hidden');
+    }
+</script>
+
+</body>
+</html>

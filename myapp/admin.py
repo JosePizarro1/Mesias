@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Lineamiento, Recomendacion, Documento
+from .models import Lineamiento, Recomendacion, Documento,Pregunta, Evaluacion, Respuesta
 
 # Personalización del admin para el modelo Lineamiento
 class LineamientoAdmin(admin.ModelAdmin):
@@ -30,3 +30,34 @@ class DocumentoAdmin(admin.ModelAdmin):
     list_per_page = 20  # Controla cuántos documentos se muestran por página
 
 admin.site.register(Documento, DocumentoAdmin)
+
+
+
+@admin.register(Pregunta)
+class PreguntaAdmin(admin.ModelAdmin):
+    list_display   = ('id', 'seccion', 'subseccion', 'short_texto')
+    list_filter    = ('seccion', 'subseccion')
+    search_fields  = ('texto',)
+
+    def short_texto(self, obj):
+        return obj.texto[:50] + ('…' if len(obj.texto) > 50 else '')
+    short_texto.short_description = 'Pregunta (resumen)'
+
+
+@admin.register(Evaluacion)
+class EvaluacionAdmin(admin.ModelAdmin):
+    list_display   = ('usuario', 'fase', 'fecha_inicio', 'fecha_fin')
+    list_filter    = ('fase', 'fecha_inicio')
+    search_fields  = ('usuario__username',)
+
+
+@admin.register(Respuesta)
+class RespuestaAdmin(admin.ModelAdmin):
+    list_display   = ('evaluacion', 'pregunta_resumen', 'valor', 'fecha')
+    list_filter    = ('valor', 'fecha')
+    search_fields  = ('pregunta__texto', 'evaluacion__usuario__username')
+
+    def pregunta_resumen(self, obj):
+        return obj.pregunta.texto[:50] + ('…' if len(obj.pregunta.texto) > 50 else '')
+    pregunta_resumen.short_description = 'Pregunta'
+

@@ -1,0 +1,48 @@
+{% load static %}
+<link rel="shortcut icon" href="{% static 'images/icon.jpeg' %}" type="image/jpeg">
+
+<!-- Header -->
+<header class="bg-white text-black p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+        <!-- Logo -->
+        <div class="flex items-center flex-shrink-0">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'images/logomesias.png' %}" alt="Logo MESIAS" class="h-10">
+            </a>
+        </div>
+
+        <!-- Espaciador para separar el logo y el login -->
+        <div class="flex-grow"></div>
+
+        <!-- Botón de menú hamburguesa (visible solo en móviles) -->
+        <div class="lg:hidden">
+            <button id="menu-toggle" class="text-black focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Menú de navegación en escritorio -->
+        <nav id="menu" class="hidden lg:flex items-center space-x-4">
+            <a href="{% url 'login' %}" class="btn btn-custom px-4 py-2">Login</a>
+        </nav>
+    </div>
+
+    <!-- Menú desplegable para móviles -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-white shadow-md">
+        <a href="{% url 'login' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 text-right">Login</a>
+    </div>
+</header>
+
+{% include 'soporte.html' %}
+
+<script>
+    // Mostrar/ocultar menú hamburguesa en dispositivos móviles
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>

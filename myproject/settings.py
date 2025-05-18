@@ -19,8 +19,10 @@ SECRET_KEY = 'django-insecure-yd+w@b#jwzp8x3m^mimq02k$f#&@x8%usn056i8@wpl+!y1k)z
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+LOGOUT_REDIRECT_URL = '/login/'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mesias.pythonanywhere.com','localhost','127.0.0.1']
+OPENAI_API_KEY = "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"
 
 
 # Application definition
@@ -32,7 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "myapp",
+    'myapp',
 ]
 
 MIDDLEWARE = [
@@ -101,11 +103,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Lima'  # Zona horaria de Lima
+
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

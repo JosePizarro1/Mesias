@@ -12,7 +12,7 @@
 
     <!-- Cargar Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
+
     <!-- Cargar Font Awesome -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
@@ -71,24 +71,12 @@ body {
 
 <body>
 
-    <!-- Header -->
-    <!-- Header -->
-    <header class="bg-white text-black p-4 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <img src="{% static 'images/logomesias.png' %}" alt="Logo MESIAS" class="h-10">
-            <nav class="flex flex-1 justify-between items-center">
-                <a href="{% url 'home' %}" class="nav-item hover:text-gray-600">Home</a>
-                <a href="#" class="nav-item hover:text-gray-600">Proyectos</a>
-                <a href="#" class="nav-item hover:text-gray-600">Test</a>
-            </nav>
-            <a href="{% url 'login' %}" class="btn btn-custom px-4 py-2">Login</a>
-        </div>
-    </header>
+{% include 'header.html' %}
 
     <!-- Lineamientos Section -->
     <section class="py-10">
         <h2 class="text-center text-3xl font-bold mb-6 text-gray-800">Lineamientos que debes conocer</h2>
-        
+
         <!-- Buscador -->
         <div class="search-bar">
             <input type="text" id="searchInput" class="form-control" placeholder="Buscar lineamientos..." aria-label="Buscar lineamientos" onkeyup="filtrarLineamientos()">
@@ -131,7 +119,7 @@ body {
             let input = document.getElementById('searchInput');
             let filter = input.value.toLowerCase();
             let lineamientos = document.getElementById('lineamientosList').getElementsByClassName('lineamiento-card');
-            
+
             for (let i = 0; i < lineamientos.length; i++) {
                 let titulo = lineamientos[i].getAttribute('data-titulo');
                 if (titulo.includes(filter)) {

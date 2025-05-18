@@ -1,0 +1,53 @@
+<style>
+  /* Botón flotante de soporte */
+  #support-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #4F46E5;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    cursor: pointer;
+    animation: float 3s ease-in-out infinite;
+    z-index: 1000;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+  }
+
+  /* Tooltip */
+  #support-btn .tooltip {
+    position: absolute;
+    bottom: 75px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+  }
+  #support-btn:hover .tooltip {
+    opacity: 1;
+  }
+</style>
+
+<a id="support-btn"
+   href="https://mail.google.com/mail/?view=cm&fs=1&to=mesias202401@gmail.com
+         &su=Soporte%20MESIAS
+         &body=¡Hola!%0AQuisiera%20consultar%20sobre%20..."
+   target="_blank" rel="noopener noreferrer">
+  <i class="fas fa-robot fa-lg"></i>
+  <span class="tooltip">Enviar correo</span>
+</a>
+

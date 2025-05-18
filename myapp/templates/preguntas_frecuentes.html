@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preguntas Frecuentes - MESIAS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  >
+
+<link rel="shortcut icon" href="{% static 'images/icon.jpeg' %}" type="image/jpeg">
+  <script
+    src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js"
+    defer
+  ></script>
+</head>
+
+<body class="min-h-screen flex bg-gray-900 font-serif text-white">
+
+  {% include 'lateral.html' %}
+
+<main class="flex-1 ml-0 md:ml-64 overflow-auto p-8">
+  <!-- Encabezado con degradado -->
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-500">
+      Preguntas Frecuentes
+    </h1>
+    <p class="mt-2 text-gray-400">Encuentra respuestas rápidas a tus dudas</p>
+  </div>
+
+  <div class="space-y-6">
+    <!-- Ítem 1 -->
+    <div x-data="{ open: false }" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <button
+        @click="open = !open"
+        class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-700 transition-colors"
+      >
+        <span class="flex items-center gap-3">
+          <i class="bi bi-question-circle-fill text-indigo-400 text-xl"></i>
+          <span class="text-lg font-semibold">1. ¿Cómo me registro en la plataforma MESIAS?</span>
+        </span>
+        <i
+          class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+          :class="{ 'rotate-180': open }"
+        ></i>
+      </button>
+      <div
+        x-show="open"
+        x-transition
+        class="px-8 pb-6 text-gray-300 bg-gray-900 border-t border-gray-700"
+      >
+        Puedes registrarte desde la pantalla principal haciendo clic en “Iniciar Sesión” y luego en “Regístrate aquí”. Completa tus datos y sigue las instrucciones del correo de confirmación.
+      </div>
+    </div>
+
+    <!-- Ítem 2 -->
+    <div x-data="{ open: false }" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <button
+        @click="open = !open"
+        class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-700 transition-colors"
+      >
+        <span class="flex items-center gap-3">
+          <i class="bi bi-question-circle-fill text-indigo-400 text-xl"></i>
+          <span class="text-lg font-semibold">2. Olvidé mi contraseña, ¿cómo la recupero?</span>
+        </span>
+        <i
+          class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+          :class="{ 'rotate-180': open }"
+        ></i>
+      </button>
+      <div
+        x-show="open"
+        x-transition
+        class="px-8 pb-6 text-gray-300 bg-gray-900 border-t border-gray-700"
+      >
+        En la página de inicio de sesión, selecciona “¿Olvidaste tu contraseña?” y sigue los pasos para restablecerla.
+      </div>
+    </div>
+
+    <!-- Ítem 3 -->
+    <div x-data="{ open: false }" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <button
+        @click="open = !open"
+        class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-700 transition-colors"
+      >
+        <span class="flex items-center gap-3">
+          <i class="bi bi-question-circle-fill text-indigo-400 text-xl"></i>
+          <span class="text-lg font-semibold">3. ¿Cómo actualizo mi información personal?</span>
+        </span>
+        <i
+          class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+          :class="{ 'rotate-180': open }"
+        ></i>
+      </button>
+      <div
+        x-show="open"
+        x-transition
+        class="px-8 pb-6 text-gray-300 bg-gray-900 border-t border-gray-700"
+      >
+        Accede a la plataforma y selecciona “Perfil” en el menú. Allí podrás editar tus datos personales y guardarlos.
+      </div>
+    </div>
+
+    <!-- Ítem 4 -->
+    <div x-data="{ open: false }" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <button
+        @click="open = !open"
+        class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-700 transition-colors"
+      >
+        <span class="flex items-center gap-3">
+          <i class="bi bi-question-circle-fill text-indigo-400 text-xl"></i>
+          <span class="text-lg font-semibold">4. ¿Cómo cierro sesión de forma segura?</span>
+        </span>
+        <i
+          class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+          :class="{ 'rotate-180': open }"
+        ></i>
+      </button>
+      <div
+        x-show="open"
+        x-transition
+        class="px-8 pb-6 text-gray-300 bg-gray-900 border-t border-gray-700"
+      >
+        En el menú principal, haz clic en “Cerrar sesión”. Así saldrás de la plataforma de forma segura.
+      </div>
+    </div>
+
+    <!-- Ítem 5 -->
+    <div x-data="{ open: false }" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <button
+        @click="open = !open"
+        class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-700 transition-colors"
+      >
+        <span class="flex items-center gap-3">
+          <i class="bi bi-question-circle-fill text-indigo-400 text-xl"></i>
+          <span class="text-lg font-semibold">5. ¿Qué tipo de recomendaciones ofrece el chatbot?</span>
+        </span>
+        <i
+          class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+          :class="{ 'rotate-180': open }"
+        ></i>
+      </button>
+      <div
+        x-show="open"
+        x-transition
+        class="px-8 pb-6 text-gray-300 bg-gray-900 border-t border-gray-700"
+      >
+        El chatbot sugiere prácticas éticas y medidas de seguridad basadas en evaluaciones previas y el análisis de tu proyecto de IA.
+      </div>
+    </div>
+
+    <!-- Ítem 6 -->
+    <div x-data="{ open: false }" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <button
+        @click="open = !open"
+        class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-700 transition-colors"
+      >
+        <span class="flex items-center gap-3">
+          <i class="bi bi-question-circle-fill text-indigo-400 text-xl"></i>
+          <span class="text-lg font-semibold">7. ¿Dónde puedo ver el historial de evaluaciones de mis proyectos?</span>
+        </span>
+        <i
+          class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+          :class="{ 'rotate-180': open }"
+        ></i>
+      </button>
+      <div
+        x-show="open"
+        x-transition
+        class="px-8 pb-6 text-gray-300 bg-gray-900 border-t border-gray-700"
+      >
+        Ve a “Historial de evaluaciones”. Allí encontrarás una lista con todas tus evaluaciones; selecciona el chat que desees revisar.
+      </div>
+    </div>
+
+    <!-- Ítem 7 -->
+    <div x-data="{ open: false }" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <button
+        @click="open = !open"
+        class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-700 transition-colors"
+      >
+        <span class="flex items-center gap-3">
+          <i class="bi bi-question-circle-fill text-indigo-400 text-xl"></i>
+          <span class="text-lg font-semibold">8. ¿Dónde solicito soporte técnico?</span>
+        </span>
+        <i
+          class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+          :class="{ 'rotate-180': open }"
+        ></i>
+      </button>
+      <div
+        x-show="open"
+        x-transition
+        class="px-8 pb-6 text-gray-300 bg-gray-900 border-t border-gray-700"
+      >
+        Desde el menú principal, selecciona “Soporte” y completa el formulario. Nuestro equipo te responderá lo antes posible.
+      </div>
+    </div>
+
+    <!-- Ítem 8 -->
+    <div x-data="{ open: false }" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <button
+        @click="open = !open"
+        class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-700 transition-colors"
+      >
+        <span class="flex items-center gap-3">
+          <i class="bi bi-question-circle-fill text-indigo-400 text-xl"></i>
+          <span class="text-lg font-semibold">9. ¿Quién puede ver los resultados de mi autoevaluación?</span>
+        </span>
+        <i
+          class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+          :class="{ 'rotate-180': open }"
+        ></i>
+      </button>
+      <div
+        x-show="open"
+        x-transition
+        class="px-8 pb-6 text-gray-300 bg-gray-900 border-t border-gray-700"
+      >
+        Los resultados y la lista de recomendaciones son confidenciales y solo están disponibles para ti.
+      </div>
+    </div>
+
+    <!-- Ítem 9 -->
+    <div x-data="{ open: false }" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <button
+        @click="open = !open"
+        class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-700 transition-colors"
+      >
+        <span class="flex items-center gap-3">
+          <i class="bi bi-question-circle-fill text-indigo-400 text-xl"></i>
+          <span class="text-lg font-semibold">10. ¿Hay alguna garantía o responsabilidad legal asociada a los informes?</span>
+        </span>
+        <i
+          class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+          :class="{ 'rotate-180': open }"
+        ></i>
+      </button>
+      <div
+        x-show="open"
+        x-transition
+        class="px-8 pb-6 text-gray-300 bg-gray-900 border-t border-gray-700"
+      >
+        Bajo ninguna circunstancia los miembros de MESIAS son responsables de daños directos, indirectos, incidentales o lucro cesante derivado del uso de los informes.
+      </div>
+    </div>
+
+  </div>
+</main>
+
+</body>
+
+</html>

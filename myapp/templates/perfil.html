@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil Frecuentes - MESIAS</title>
+  <link rel="shortcut icon" href="{% static 'images/icon.jpeg' %}" type="image/jpeg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  >
+
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js"
+    defer
+  ></script>
+</head>
+
+<body class="min-h-screen flex bg-gray-900 font-serif text-white">
+  {% include 'lateral.html' %}
+
+  <main class="flex-1 ml-0 md:ml-64 p-8 overflow-auto">
+    <h1 class="text-3xl font-bold mb-8">Perfil de Usuario</h1>
+
+    <div class="space-y-6">
+      <!-- Username -->
+      <form method="POST" action="{% url 'perfil' %}" x-data="{ edit: false }" x-ref="usernameForm">
+        {% csrf_token %}
+        <div class="flex items-center bg-gray-800 p-4 rounded-lg shadow-lg">
+          <div class="flex-1">
+            <label class="block text-gray-400 mb-1">Nombre de usuario</label>
+            <input
+              x-bind:disabled="!edit"
+              type="text"
+              name="username"
+              value="{{ request.user.username }}"
+              class="w-full bg-gray-700 text-white p-2 rounded focus:outline-none"
+            />
+          </div>
+          <button
+            type="button"
+            x-show="!edit"
+            @click="edit = true"
+            class="ml-4 text-indigo-400 hover:text-indigo-200"
+          >
+            <i class="fas fa-edit fa-lg"></i>
+          </button>
+          <button
+            type="submit"
+            x-show="edit"
+            @click.prevent="$refs.usernameForm.submit()"
+            class="ml-4 text-green-400 hover:text-green-200"
+          >
+            <i class="fas fa-save fa-lg"></i>
+          </button>
+        </div>
+      </form>
+
+      <!-- Email -->
+      <form method="POST" action="{% url 'perfil' %}" x-data="{ edit: false }" x-ref="emailForm">
+        {% csrf_token %}
+        <div class="flex items-center bg-gray-800 p-4 rounded-lg shadow-lg">
+          <div class="flex-1">
+            <label class="block text-gray-400 mb-1">Correo electrónico</label>
+            <input
+              x-bind:disabled="!edit"
+              type="email"
+              name="email"
+              value="{{ request.user.email }}"
+              class="w-full bg-gray-700 text-white p-2 rounded focus:outline-none"
+            />
+          </div>
+          <button
+            type="button"
+            x-show="!edit"
+            @click="edit = true"
+            class="ml-4 text-indigo-400 hover:text-indigo-200"
+          >
+            <i class="fas fa-edit fa-lg"></i>
+          </button>
+          <button
+            type="submit"
+            x-show="edit"
+            @click.prevent="$refs.emailForm.submit()"
+            class="ml-4 text-green-400 hover:text-green-200"
+          >
+            <i class="fas fa-save fa-lg"></i>
+          </button>
+        </div>
+      </form>
+
+      <!-- Password -->
+<!-- Password -->
+<form method="POST" action="{% url 'perfil' %}" x-data="{ edit: false }" x-ref="passwordForm">
+  {% csrf_token %}
+  <div class="bg-gray-800 p-4 rounded-lg shadow-lg space-y-4">
+    <div class="flex items-center justify-between">
+      <label class="block text-gray-400">Contraseña</label>
+      <button
+        type="button"
+        x-show="!edit"
+        @click="edit = true"
+        class="text-indigo-400 hover:text-indigo-200"
+      >
+        <i class="fas fa-edit fa-lg"></i>
+      </button>
+    </div>
+    <div x-show="edit" class="space-y-3">
+      <input
+        x-ref="password1"
+        type="password"
+        name="password1"
+        placeholder="Nueva contraseña"
+        class="w-full bg-gray-700 text-white p-2 rounded focus:outline-none"
+      />
+      <input
+        x-ref="password2"
+        type="password"
+        name="password2"
+        placeholder="Repetir contraseña"
+        class="w-full bg-gray-700 text-white p-2 rounded focus:outline-none"
+      />
+      <div class="flex justify-end">
+        <button
+          type="button"
+          @click="
+            if ($refs.password1.value !== $refs.password2.value) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Las contraseñas no coinciden',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            } else {
+              $refs.passwordForm.submit();
+            }
+          "
+          class="text-green-400 hover:text-green-200"
+        >
+          <i class="fas fa-save fa-lg"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      {% if messages %}
+        {% for message in messages %}
+          Swal.fire({
+            icon: "{{ message.tags }}".includes("success")
+              ? "success"
+              : "error",
+            title: "{{ message|escapejs }}",
+            timer: 2500,
+            showConfirmButton: false
+          });
+        {% endfor %}
+      {% endif %}
+    });
+  </script>
+</body>
+
+</html>

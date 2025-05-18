@@ -1,0 +1,274 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asistente Virtual – MESIAS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"/>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous" defer></script>
+  <link rel="shortcut icon" href="{% static 'images/icon.jpeg' %}" type="image/jpeg">
+</head>
+<body class="bg-gray-900 font-sans">
+
+  <div class="flex h-screen">
+    {% include 'lateral.html' %}
+
+    <main class="flex-1 flex flex-col p-4 md:p-6 bg-gray-900">
+      <div class="w-full max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-2xl flex flex-col h-full overflow-hidden">
+        <!-- Header del Chat -->
+        <div class="p-6 bg-gray-900 border-b border-gray-700">
+          <h1 class="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+            <i class="bi bi-robot text-blue-400"></i>
+            <span>Asistente Virtual MESIAS</span>
+          </h1>
+        </div>
+
+        <!-- Área de Mensajes -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scroll">
+          <!-- Mensaje Inicial -->
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
+              <i class="bi bi-robot text-white text-sm"></i>
+            </div>
+            <div class="bg-gray-700 text-white p-4 rounded-2xl rounded-tl-none max-w-3xl space-y-2 shadow-lg">
+              <p>¡Hola! 👋 Soy <strong class="font-semibold text-blue-300">MESIAS</strong>, tu asistente para la Evaluación de IA.</p>
+              <p class="text-gray-300 text-sm">Puedes:</p>
+              <ul class="list-disc list-inside ml-4 space-y-1 text-sm">
+                <li>Realizar la evaluación completa</li>
+                <li>Trabajar en una sección específica</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Área de Input -->
+        <div class="p-4 bg-gray-900 border-t border-gray-700">
+          <div class="relative">
+            <textarea id="message-input"
+                   rows="1"
+                   placeholder="Escribe tu mensaje..."
+                   class="w-full pr-12 pl-4 py-3 bg-gray-800 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                   oninput="autoGrow(this)"></textarea>
+            <button id="send-btn"
+                    class="absolute right-3 bottom-3 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg transition-all">
+              <i class="bi bi-send text-sm"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const chatMessages = document.getElementById('chat-messages');
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    
+    // Autoajustar altura del textarea
+    function autoGrow(element) {
+      element.style.height = 'auto';
+      element.style.height = element.scrollHeight + 'px';
+    }
+
+    // Manejar Enter para enviar
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendBtn.click();
+      }
+    });
+  </script>
+
+  <script>
+    const EVAL_ID = {{ evaluacion_id }};
+    const GET_URL = '{% url "get_response" %}';
+  </script>
+
+  <script>
+    function appendMessage(from, text) {
+      const wrap = document.createElement('div');
+      wrap.className = from === 'user' 
+        ? 'flex items-start gap-3 justify-end' 
+        : 'flex items-start gap-3';
+      
+      const isBot = from === 'bot';
+      
+      wrap.innerHTML = `
+        ${!isBot ? '' : `
+          <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
+            <i class="bi bi-robot text-white text-sm"></i>
+          </div>
+        `}
+        
+        <div class="${isBot ? 
+          'bg-gray-700 rounded-2xl rounded-tl-none' : 
+          'bg-blue-600 rounded-2xl rounded-tr-none'} 
+          text-white p-4 max-w-3xl shadow-lg transition-opacity opacity-0 animate-fade-in">
+          ${text}
+        </div>
+        
+        ${isBot ? '' : `
+          <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center shrink-0">
+            <i class="bi bi-person text-white text-sm"></i>
+          </div>
+        `}
+      `;
+      
+      chatMessages.appendChild(wrap);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTyping() {
+      const t = document.createElement('div');
+      t.className = 'flex items-start gap-3';
+      t.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
+          <i class="bi bi-robot text-white text-sm"></i>
+        </div>
+        <div class="bg-gray-700 text-white p-4 rounded-2xl rounded-tl-none max-w-md">
+          <div class="flex space-x-1">
+            <div class="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+          </div>
+        </div>
+      `;
+      chatMessages.appendChild(t);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return t;
+    }
+
+    function buildQuestionsForm(questions, section) {
+      messageInput.disabled = true;
+      sendBtn.disabled = true;
+      sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      const oldForm = document.getElementById('questions-form');
+      if (oldForm) oldForm.remove();
+
+      const form = document.createElement('form');
+      form.id = 'questions-form';
+      form.className = 'space-y-4 p-4 bg-gray-800 rounded-xl';
+
+      const POST_URL = `/evaluaciones/responder/${EVAL_ID}/${section}/`;
+      form.setAttribute('action', POST_URL);
+      form.setAttribute('method', 'POST');
+
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = 'csrfmiddlewaretoken';
+      csrfInput.value = document.cookie.match(/csrftoken=([^;]+)/)[1];
+      form.appendChild(csrfInput);
+
+      const legend = document.createElement('div');
+      legend.className = 'p-4 bg-gray-900 text-sm text-gray-300 rounded-lg';
+      legend.innerHTML = `
+        <div class="grid grid-cols-5 gap-2 text-center text-xs mb-2">
+          <span class="text-red-400">1 - No considerado</span>
+          <span class="text-orange-400">2 - Parcial</span>
+          <span class="text-yellow-400">3 - Mínimo</span>
+          <span class="text-lime-400">4 - Bueno</span>
+          <span class="text-green-400">5 - Excelente</span>
+        </div>
+      `;
+      form.appendChild(legend);
+
+      questions.forEach((q, index) => {
+        const div = document.createElement('div');
+        div.className = 'bg-gray-900 p-4 rounded-lg';
+        div.innerHTML = `
+          <label class="block text-sm text-gray-300 mb-2">${index + 1}. ${q.texto}</label>
+          <select name="valor_${q.id}" 
+                  class="w-full bg-gray-800 text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <option value="1" selected>...</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        `;
+        form.appendChild(div);
+      });
+
+      const btnWrap = document.createElement('div');
+      btnWrap.className = 'text-right mt-6';
+      btnWrap.innerHTML = `
+        <button type="submit"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-all">
+          <i class="bi bi-send mr-2"></i>Enviar respuestas
+        </button>
+      `;
+      form.appendChild(btnWrap);
+
+      chatMessages.appendChild(form);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    sendBtn.addEventListener('click', async () => {
+      const msg = messageInput.value.trim();
+      if (!msg) return;
+
+      appendMessage('user', msg);
+      messageInput.value = '';
+      messageInput.style.height = 'auto';
+      sendBtn.disabled = true;
+      sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      const typing = showTyping();
+
+      try {
+        const response = await fetch(`${GET_URL}?message=${encodeURIComponent(msg)}`);
+        const data = await response.json();
+        
+        typing.remove();
+        
+        if (data.type === 'questions') {
+          appendMessage('bot', `📝 <strong>${data.count} preguntas</strong> para la sección:<br><em>"${data.section}"</em>`);
+          buildQuestionsForm(data.questions, data.section || 'todas');
+        } else {
+          appendMessage('bot', data.response);
+        }
+      } catch (error) {
+        typing.remove();
+        appendMessage('bot', '⚠️ Error de conexión. Intenta nuevamente.');
+      } finally {
+        if (!document.getElementById('questions-form')) {
+          sendBtn.disabled = false;
+          sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      }
+    });
+  </script>
+
+  <style>
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 4px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+  </style>
+</body>
+</html>
